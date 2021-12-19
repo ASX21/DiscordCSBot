@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace DiscordCSBot
 {
@@ -9,7 +10,17 @@ namespace DiscordCSBot
 
         public async Task MainAsync()
         {
-
+            string token = String.Empty;
+            try
+            {
+                token = File.ReadAllText("APIKey.txt");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error reading the file \"APIKey.txt\"");
+                Console.WriteLine(e.Message);
+            }
+            Console.WriteLine(token);
         }
     }
 }
