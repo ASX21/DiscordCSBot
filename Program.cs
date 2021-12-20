@@ -32,15 +32,21 @@ namespace DiscordCSBot
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
-            _client.MessageUpdated += _client_MessageUpdated;
+            _client.MessageReceived += _client_MessageReceived;
 
             await Task.Delay(-1);
         }
 
-        private async Task _client_MessageUpdated(Cacheable<IMessage, ulong> arg1, SocketMessage arg2, ISocketMessageChannel arg3)
+        private async Task _client_MessageReceived(SocketMessage arg)
         {
-            var message = await arg1.DownloadAsync();
-            Console.WriteLine($"{message} => {arg2} in {arg3.Name}");
+            string content = arg.Content.ToLower();
+            if ((content.Contains("chuck") || content.Contains("norris")) &&
+                (arg.Author.Id != _client.CurrentUser.Id))
+            {
+                var joke = await DataSource.RandomJoke();
+                await arg.Channel.SendMessageAsync("Did anyone say something about Chuck Norris?\n" +
+                    $"{joke}");
+            }
         }
 
         private Task Log(LogMessage msg)
