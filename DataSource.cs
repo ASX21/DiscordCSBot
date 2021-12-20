@@ -12,7 +12,7 @@ namespace DiscordCSBot
     class DataSource
     {
         private static string urlRand = $"https://api.chucknorris.io/jokes/random";
-        private static string urlCat = $"https://api.chucknorris.io/jokes/random?category={0}";
+        private static string urlCat = $"https://api.chucknorris.io/jokes/random?category=";
         private static string urlCats = $"https://api.chucknorris.io/jokes/categories";
 
         public static async Task<string> RandomJoke()
@@ -47,7 +47,7 @@ namespace DiscordCSBot
             string res = "";
             using (var client = new HttpClient())
             {
-                var request = await client.GetAsync(String.Format(urlCat, cat));
+                var request = await client.GetAsync(urlCat + cat);
                 var json = request.Content.ReadAsStringAsync().Result;
                 var datos = (JContainer)JsonConvert.DeserializeObject(json);
                 res = (string)datos["value"];

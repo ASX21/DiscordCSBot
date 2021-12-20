@@ -40,13 +40,41 @@ namespace DiscordCSBot
         private async Task _client_MessageReceived(SocketMessage arg)
         {
             string content = arg.Content.ToLower();
-            if ((content.Contains("chuck") || content.Contains("norris")) &&
-                (arg.Author.Id != _client.CurrentUser.Id))
+            if (arg.Author.IsBot ||
+                (arg.Author.Id == _client.CurrentUser.Id)) return;
+            if ((content.Contains("chuck") || content.Contains("norris")))
             {
                 var joke = await DataSource.RandomJoke();
                 await arg.Channel.SendMessageAsync("Did anyone say something about Chuck Norris?\n" +
                     $"{joke}");
             }
+            else if (content.StartsWith("!cnjoke"))
+            {
+                var args = content.Split(' ');
+                if (args.Length == 2)
+                {
+                    try
+                    {
+                        var joke = await DataSource.CatJoke(args[1]);
+                        await arg.Channel.SendMessageAsync(joke);
+                    }
+                    catch (Exception ex)
+                    {
+                        await arg.Channel.SendMessageAsync("Something doesn't seem right");
+                    }
+                }
+            }
+            else if (content.StartsWith("!cncat"))
+            {
+                var cats = String.Join("\n- ", (await DataSource.GetCathegories()));
+                await arg.Channel.SendMessageAsync($"Cathegories:\n{cats}");
+            }
+            else if (content.StartsWith("!cnhelp"))
+            {
+                await arg.Channel.SendMessageAsync("Type !cnjoke for a joke by cathegory " +
+                    "or !cncat for the list of cathegories.");
+            }
+
         }
 
         private Task Log(LogMessage msg)
