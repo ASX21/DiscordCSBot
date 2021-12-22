@@ -52,7 +52,6 @@ namespace DiscordCSBot
                         {
                             await prevc.DeleteAsync();
                         }
-                        return;
                     }
                 }
                 if (vc.Name != "Join to create a new VC") return;
